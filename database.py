@@ -24,12 +24,17 @@ def add(fanout: list[tuple[tuple[float,float,float],float]], song: str):
         d[pair[0]].append((song, pair[1]))
     export(d)
 
+def remove(song: str):
+    d = load()
+    for key in d:
+        d[key] = [pair for pair in d[key] if pair[0] != song]
+    export(d)
+
+
 def view():
     print(load())
 
 def reset():
     a = {}
     export(a)
-
-
 
