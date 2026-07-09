@@ -1,16 +1,16 @@
 """
-Tasks:
-- master method that imports an mp3 file
-    - sampling the file + converting it into a spectrogram
-    - create fingerprints
-    - add to database dictionary
+Load and add items to the database, db.pkl
 """
 
 import pickle
 
 def load() -> dict:
-    with open("db.pkl", mode = "rb") as opened_file:
-        return pickle.load(opened_file)
+    try:
+        with open("db.pkl", mode = "rb") as opened_file:
+            return pickle.load(opened_file)
+    except EOFError:
+        a = {}
+        return a
 
 def export(d: dict):   
     with open("db.pkl",mode="wb") as opened_file:
@@ -23,5 +23,13 @@ def add(fanout: list[tuple[tuple[float,float,float],float]], song: str):
             d[pair[0]] = []
         d[pair[0]].append((song, pair[1]))
     export(d)
+
+def view():
+    print(load())
+
+def reset():
+    a = {}
+    export(a)
+
 
 
