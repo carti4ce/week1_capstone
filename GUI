@@ -1,0 +1,206 @@
+import tkinter as tk
+from tkinter import ttk
+import threading             #The GUI might need to be edited to suit the final version
+import time
+
+
+class MAZ:
+
+    def __init__(self, root):
+
+        self.root = root
+
+        self.root.title("MAZ")
+        self.root.geometry("500x400")
+        self.root.resizable(False, False)
+
+
+        self.running = False
+
+
+        self.title = tk.Label(
+            root,
+            text="MAZ",
+            font=("Helvetica", 24, "bold")
+        )
+
+        self.title.pack(pady=20)
+
+
+
+        self.status = tk.Label(
+            root,
+            text="Ready",
+            font=("Helvetica", 12)
+        )
+
+        self.status.pack()
+
+
+
+        self.song_label = tk.Label(
+            root,
+            text="Song: None",
+            font=("Helvetica", 14)
+        )
+
+        self.song_label.pack(
+            pady=25
+        )
+
+
+
+        self.confidence_label = tk.Label(
+            root,
+            text="Confidence: --%",
+            font=("Helvetica", 12)
+        )
+
+        self.confidence_label.pack()
+
+
+
+        self.progress = ttk.Progressbar(
+            root,
+            length=350,
+            mode="determinate"
+        )
+
+        self.progress.pack(
+            pady=25
+        )
+
+
+
+        button_frame = tk.Frame(root)
+
+        button_frame.pack()
+
+
+
+        self.record_button = tk.Button(
+            button_frame,
+            text="Record",
+            width=15,
+            height=2,
+            command=self.start
+        )
+
+        self.record_button.grid(
+            row=0,
+            column=0,
+            padx=10
+        )
+
+
+
+        self.stop_button = tk.Button(
+            button_frame,
+            text="Stop",
+            width=15,
+            height=2,
+            command=self.stop
+        )
+
+        self.stop_button.grid(
+            row=0,
+            column=1,
+            padx=10
+        )
+
+
+
+    def start(self):
+
+        if self.running:
+            return
+
+
+        self.running = True
+
+        self.song_label.config(
+            text="Song: Listening..."
+        )
+
+        self.confidence_label.config(
+            text="Confidence: --%"
+        )
+
+        self.status.config(
+            text="Recording..."
+        )
+
+
+        self.progress["value"] = 0
+
+
+        threading.Thread(
+            target=self.fake_record,
+            daemon=True
+        ).start()
+
+
+
+    def fake_record(self):
+
+        for i in range(101):
+
+            if not self.running:
+                return
+
+
+            time.sleep(0.03)
+
+
+            self.progress["value"] = i
+
+
+
+        if self.running:
+
+            self.status.config(
+                text="Processing..."
+            )
+
+
+            time.sleep(1)
+
+
+            self.song_label.config(
+                text="Song: Waiting for recognizer"
+            )
+
+
+            self.confidence_label.config(
+                text="Confidence: --%"
+            )
+
+
+            self.status.config(
+                text="Ready"
+            )
+
+
+            self.running = False
+
+
+
+    def stop(self):
+
+        self.running = False
+
+
+        self.progress["value"] = 0
+
+
+        self.status.config(
+            text="Stopped"
+        )
+
+
+
+root = tk.Tk()
+
+app = MAZ(root)
+
+root.mainloop()
